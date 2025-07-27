@@ -159,21 +159,36 @@ function handleProfilePicture() {
   const profileFallback = document.getElementById('profileFallback');
   
   if (profilePicture && profileFallback) {
-    // Show fallback by default until image loads
+    // Start with fallback visible
     profileFallback.classList.add('show');
     profilePicture.style.display = 'none';
     
+    // Set a timeout to ensure fallback shows if image takes too long
+    const imageTimeout = setTimeout(() => {
+      profilePicture.style.display = 'none';
+      profileFallback.classList.add('show');
+    }, 3000); // 3 second timeout
+    
+    profilePicture.addEventListener('load', function() {
+      // Image loaded successfully
+      clearTimeout(imageTimeout);
+      profileFallback.classList.remove('show');
+      profilePicture.style.display = 'block';
+    });
+    
     profilePicture.addEventListener('error', function() {
-      // Hide the image and show fallback
+      // Image failed to load
+      clearTimeout(imageTimeout);
       profilePicture.style.display = 'none';
       profileFallback.classList.add('show');
     });
     
-    profilePicture.addEventListener('load', function() {
-      // Image loaded successfully, hide fallback
+    // Check if image is already loaded (cached)
+    if (profilePicture.complete && profilePicture.naturalHeight !== 0) {
+      clearTimeout(imageTimeout);
       profileFallback.classList.remove('show');
       profilePicture.style.display = 'block';
-    });
+    }
   }
 }
 
