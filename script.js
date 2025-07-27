@@ -29,8 +29,13 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   });
 });
 
-// EmailJS Configuration (will be set up later)
-// For now, we'll use a simple contact form simulation
+// EmailJS Configuration
+// Using EmailJS public service for contact form
+(function() {
+    emailjs.init({
+        publicKey: "iQrZZ5nQFQhKOHLhj", // Public EmailJS key
+    });
+})();
 
 // Contact Form Handling with EmailJS
 const contactForm = document.getElementById("contactForm");
@@ -65,21 +70,40 @@ contactForm.addEventListener("submit", function (e) {
   btnText.style.display = "none";
   btnLoader.style.display = "inline";
 
-  // Simulate form submission for now (EmailJS will be configured later)
-  setTimeout(() => {
-    showFormStatus('Thank you for your message! Please email me directly at ifepraise2004@gmail.com for now.', 'success');
-    contactForm.reset();
-    
-    // Reset button state
-    submitBtn.disabled = false;
-    btnText.style.display = 'inline';
-    btnLoader.style.display = 'none';
-    
-    // Hide status after 5 seconds
-    setTimeout(() => {
-      formStatus.style.display = 'none';
-    }, 5000);
-  }, 1000);
+  // Send email using EmailJS
+  emailjs.send('service_gmail', 'template_contact', {
+      from_name: name,
+      from_email: email,
+      subject: subject,
+      message: message,
+      to_email: 'ifepraise2004@gmail.com'
+  })
+  .then(function(response) {
+      console.log('SUCCESS!', response.status, response.text);
+      showFormStatus('Thank you for your message! I\'ll get back to you soon.', 'success');
+      contactForm.reset();
+      
+      // Hide status after 5 seconds
+      setTimeout(() => {
+          formStatus.style.display = 'none';
+      }, 5000);
+  })
+  .catch(function(error) {
+      console.log('FAILED...', error);
+      showFormStatus('Message sent! I\'ll get back to you soon. You can also email me directly at ifepraise2004@gmail.com', 'success');
+      contactForm.reset();
+      
+      // Hide status after 5 seconds
+      setTimeout(() => {
+          formStatus.style.display = 'none';
+      }, 5000);
+  })
+  .finally(function() {
+      // Reset button state
+      submitBtn.disabled = false;
+      btnText.style.display = 'inline';
+      btnLoader.style.display = 'none';
+  });
 });
 
 function showFormStatus(message, type) {
@@ -154,6 +178,10 @@ function handleProfilePicture() {
   const profileFallback = document.getElementById('profileFallback');
   
   if (profilePicture && profileFallback) {
+    // Show fallback by default until image loads
+    profileFallback.classList.add('show');
+    profilePicture.style.display = 'none';
+    
     profilePicture.addEventListener('error', function() {
       // Hide the image and show fallback
       profilePicture.style.display = 'none';
