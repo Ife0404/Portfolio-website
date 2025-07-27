@@ -696,6 +696,70 @@ body {
 }
 
 /* Responsive Design */
+@media (max-width: 480px) {
+    .hero {
+        padding: 80px 15px 40px;
+        min-height: 100vh;
+    }
+
+    .hero-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 0 5px;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+        padding: 0 5px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        gap: 0.8rem;
+        width: 100%;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 200px;
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    .profile-container {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+    }
+
+    .profile-picture,
+    .profile-fallback {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-icon {
+        font-size: 3rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+}
+
 @media (max-width: 768px) {
     .hamburger {
         display: flex;
