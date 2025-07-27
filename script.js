@@ -29,13 +29,8 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   });
 });
 
-// EmailJS Configuration
-// Using EmailJS public service for contact form
-(function() {
-    emailjs.init({
-        publicKey: "iQrZZ5nQFQhKOHLhj", // Public EmailJS key
-    });
-})();
+// Simple contact form solution
+// Opens user's email client with pre-filled message
 
 // Contact Form Handling with EmailJS
 const contactForm = document.getElementById("contactForm");
@@ -70,40 +65,26 @@ contactForm.addEventListener("submit", function (e) {
   btnText.style.display = "none";
   btnLoader.style.display = "inline";
 
-  // Send email using EmailJS
-  emailjs.send('service_gmail', 'template_contact', {
-      from_name: name,
-      from_email: email,
-      subject: subject,
-      message: message,
-      to_email: 'ifepraise2004@gmail.com'
-  })
-  .then(function(response) {
-      console.log('SUCCESS!', response.status, response.text);
-      showFormStatus('Thank you for your message! I\'ll get back to you soon.', 'success');
-      contactForm.reset();
-      
-      // Hide status after 5 seconds
-      setTimeout(() => {
-          formStatus.style.display = 'none';
-      }, 5000);
-  })
-  .catch(function(error) {
-      console.log('FAILED...', error);
-      showFormStatus('Message sent! I\'ll get back to you soon. You can also email me directly at ifepraise2004@gmail.com', 'success');
-      contactForm.reset();
-      
-      // Hide status after 5 seconds
-      setTimeout(() => {
-          formStatus.style.display = 'none';
-      }, 5000);
-  })
-  .finally(function() {
-      // Reset button state
-      submitBtn.disabled = false;
-      btnText.style.display = 'inline';
-      btnLoader.style.display = 'none';
-  });
+  // Create email with pre-filled content
+  const emailBody = `Name: ${name}%0D%0AEmail: ${email}%0D%0ASubject: ${subject}%0D%0A%0D%0AMessage:%0D%0A${message}`;
+  const mailtoLink = `mailto:ifepraise2004@gmail.com?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+  
+  // Open email client
+  window.open(mailtoLink, '_blank');
+  
+  // Show success message
+  showFormStatus('Your email client has opened with the message pre-filled. Please send the email from there. Thank you!', 'success');
+  contactForm.reset();
+  
+  // Reset button state
+  submitBtn.disabled = false;
+  btnText.style.display = 'inline';
+  btnLoader.style.display = 'none';
+  
+  // Hide status after 8 seconds
+  setTimeout(() => {
+      formStatus.style.display = 'none';
+  }, 8000);
 });
 
 function showFormStatus(message, type) {
