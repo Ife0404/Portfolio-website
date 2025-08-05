@@ -32,6 +32,10 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 // Simple contact form solution
 // Opens user's email client with pre-filled message
 
+// Initialize EmailJS with your public key
+// Replace 'YOUR_PUBLIC_KEY' with your actual EmailJS public key
+emailjs.init("ydQQve9gNt9VURaI3");
+
 // Contact Form Handling with EmailJS
 const contactForm = document.getElementById("contactForm");
 const formStatus = document.getElementById("formStatus");
@@ -40,51 +44,64 @@ const btnText = document.getElementById("btnText");
 const btnLoader = document.getElementById("btnLoader");
 
 contactForm.addEventListener("submit", function (e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Get form data
-  const formData = new FormData(contactForm);
-  const name = formData.get("from_name");
-  const email = formData.get("from_email");
-  const subject = formData.get("subject");
-  const message = formData.get("message");
+    // Get form data
+    const formData = new FormData(contactForm);
+    const templateParams = {
+        from_name: formData.get("from_name"),
+        from_email: formData.get("from_email"),
+        subject: formData.get("subject"),
+        message: formData.get("message")
+    };
 
-  // Simple validation
-  if (!name || !email || !subject || !message) {
-    showFormStatus("Please fill in all fields.", "error");
-    return;
-  }
+    // Simple validation
+    if (!templateParams.from_name || !templateParams.from_email || !templateParams.subject || !templateParams.message) {
+        showFormStatus("Please fill in all fields.", "error");
+        return;
+    }
 
-  if (!isValidEmail(email)) {
-    showFormStatus("Please enter a valid email address.", "error");
-    return;
-  }
+    if (!isValidEmail(templateParams.from_email)) {
+        showFormStatus("Please enter a valid email address.", "error");
+        return;
+    }
 
-  // Show loading state
-  submitBtn.disabled = true;
-  btnText.style.display = "none";
-  btnLoader.style.display = "inline";
+    // Show loading state
+    submitBtn.disabled = true;
+    btnText.style.display = "none";
+    btnLoader.style.display = "inline";
 
-  // Create email with pre-filled content
-  const emailBody = `Name: ${name}%0D%0AEmail: ${email}%0D%0ASubject: ${subject}%0D%0A%0D%0AMessage:%0D%0A${message}`;
-  const mailtoLink = `mailto:ifepraise2004@gmail.com?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
-  
-  // Open email client
-  window.open(mailtoLink, '_blank');
-  
-  // Show success message
-  showFormStatus('Your email client has opened with the message pre-filled. Please send the email from there. Thank you!', 'success');
-  contactForm.reset();
-  
-  // Reset button state
-  submitBtn.disabled = false;
-  btnText.style.display = 'inline';
-  btnLoader.style.display = 'none';
-  
-  // Hide status after 8 seconds
-  setTimeout(() => {
-      formStatus.style.display = 'none';
-  }, 8000);
+    // Send email using EmailJS
+    emailjs
+      .send("service_grcr20c", "template_ucdlifd", templateParams)
+      .then(
+        function (response) {
+          console.log("SUCCESS!", response.status, response.text);
+          showFormStatus(
+            "Message sent successfully! I'll get back to you soon.",
+            "success"
+          );
+          contactForm.reset();
+        },
+        function (error) {
+          console.error("FAILED...", error);
+          showFormStatus(
+            "Failed to send message. Please try again later or contact me directly at ifepraise2004@gmail.com",
+            "error"
+          );
+        }
+      )
+      .finally(function () {
+        // Reset button state
+        submitBtn.disabled = false;
+        btnText.style.display = "inline";
+        btnLoader.style.display = "none";
+
+        // Hide status after 8 seconds
+        setTimeout(() => {
+          formStatus.style.display = "none";
+        }, 8000);
+      });
 });
 
 function showFormStatus(message, type) {
